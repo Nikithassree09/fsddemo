@@ -1,0 +1,19 @@
+{
+  "name": "fsddemo",
+  "version": "1.0.0",
+  "description": "backend application repository demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nikithassree09/fsddemo.git"
+  },
+  "author": "Nikithassree",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nikithassree09/fsddemo/issues"
+  },
+  "homepage": "https://github.com/Nikithassree09/fsddemo#readme"
+}
