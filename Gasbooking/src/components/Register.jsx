@@ -1,51 +1,65 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import userServices from '../services/userServices';
 
 
-function Register() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [username, setusername] = useState('');
-    const [location, setlocation] = useState('');
+
+const Register = () => {
 
     const navigate = useNavigate();
     
-    const handleSubmit = async(e) => {
+    const handleRegister = (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:3001/api/users/register', { email, password, username, location });
-            console.log(response.data);
+        const Username = e.target[0].value;
+        const Email = e.target[1].value;
+        const Password = e.target[2].value;
+        const Location = e.target[3].value;
+        userServices.register(Email, Password, Username, Location)
+        .then(response => {
+          e.target.reset();
+          alert('Registration is successful');
 
+          setTimeout(() => {
             navigate('/login');
-        } catch (error) {
-          console.error('Failed to register, try again.', error.response.data);
-        }
+          }, 500);
+          })
+        .catch(error => {
+          alert('Registration is failed');
+        });
+        
+      }
+      const itemStyle = {
+          marginBottom: '10px',
       }
       
   
     return (
-    <form onSubmit={(handleSubmit)}>
-     <h2>Register</h2>
-     <div>
-      <label>Username</label>
-      <input type='username' value={username} onChange={(e) => setusername(e.target.value)} required></input>
+      <>
+    <form onSubmit={(handleRegister)}>
+     <div className="m-3"><h2>Register</h2></div>
+     <div className="col-auto m-3 col-md-3" style={itemStyle}>
+    <label htmlFor="username" className="col-form-label">Username</label>
+    <input type="username" className="form-control" id="username" aria-describedby="usernameHelp"></input>
     </div>
-    <div>
-      <label>Email</label>
-      <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} required></input>
+  <div className="col-auto m-3 col-md-3" style={itemStyle}>
+    <label htmlFor="email" className="col-form-label">Email</label>
+    <input type="email" className="form-control" id="email" aria-describedby="emailHelp"></input>
     </div>
-    <div>
-      <label>Password</label>
-      <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} required></input>
-    </div>
-    <div>
-      <label>Location</label>
-      <input type='Location' value={location} onChange={(e) => setlocation(e.target.value)} required></input>
-    </div>
-    <button type='submit'>Register</button>
-   </form>
+  <div className="col-auto m-3 col-md-3" style={itemStyle}>
+    <label htmlFor="password" className="col-form-label">Password</label>
+    <input type="password" className="form-control" id="password"></input>
+  </div>
+  <div className="col-auto m-3 col-md-3" style={itemStyle}>
+    <label htmlFor="location" className="col-form-label">Location</label>
+    <input type="location" className="form-control" id="location"></input>
+  </div>
+  <div className="m-3" style={itemStyle}><button type="submit" className="btn btn-primary">Submit</button></div>
+</form>
+
+   <br />
+   <div className=" col-auto m-6 gap-2"><p>Already have an account? <Link to="/login">Login</Link></p></div>
+   </>
   )
 }
+
 
 export default Register
