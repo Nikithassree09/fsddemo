@@ -6,7 +6,7 @@ const userController = {
    register: async (request, response) => {
     try {
        //get user inputs from req body
-       const { username, password, name, location } = request.body;
+       const { email, password, username, location } = request.body;
        // check if the user already exists in the database
        const user = await User.findOne({ username });
        // if the user exists, return an error
@@ -17,9 +17,9 @@ const userController = {
        const passwordHash = await bcrypt.hash(password, 10);
        // if the user does not exist, create a new user
        const newUser  = new User({
-         username,
+         email,
          passwordHash,
-         name,
+         username,
          location
        });
        // save the user to the database
@@ -39,10 +39,10 @@ const userController = {
       try{
          //get username and password from request body
          //authentication
-         const { username, password } = request.body
+         const { email, password } = request.body
 
          // check if user exists in database
-         const user = await User.findOne({ username });
+         const user = await User.findOne({ email });
          //if does not exist return error
          if (!user) {
             return response.status(400).json({ message: 'User not found' });
@@ -73,6 +73,78 @@ const userController = {
 
          //return the token
          response.json({ message: 'Login successful', token });
+      } catch (error) {
+         response.status(500).json({ message: error.message });
+      }
+   },
+   getUser: async (request, response) => {
+      try {
+          const userId = request.userId;
+          // find the user by id from the database
+          const user = await User.findById(userId).select('-passwordHash -__v -_id');
+          // if user doesnt exist, return the user
+          if (!user) {
+            return response.status(404).json({ message: 'User doesnt exist' });
+          }
+          // if user exists, return the user
+          response.json({ message: 'User found', user });
+      } catch (error) {
+         response.status(500).json({ message: error.message });
+      }
+   },
+
+   updateUser: async (request, response) => {
+      try{
+          const userId = request.userId;
+          //get the user inputs from the request body and user can update those inputs
+          const { email, username, location } = request.body;
+
+          const user = await User.findById(userId);
+
+          if (!user) {
+            return response.status(404).json({ message: 'User not found' });
+          }
+          // update the user
+          if (email) user.name = email;
+          if (location) user.location = location;
+          if (username) user.username = username
+
+          //save the updated user to the database
+          const updatedUser = await user.save();
+         
+          //return the updated user
+          response.json({ message: 'User updated successfully', user: updatedUser});
+      } catch (error) {
+         response.status(500).json({ message: error.message });
+      }
+   },
+
+   deleteUser: async (request, response) => {
+      try{
+         const userId = request.userId;
+
+         const user = await User.findById(userId);
+
+         if (!user) {
+            return response.status(404).json({ message: 'User not found' });
+         }
+
+         //delete the user
+         await user.remove();
+
+         //return
+         response.json({ message: 'User deleted successfully'});
+      } catch (error) {
+         response.status(500).json({ message: error.message });
+      }
+   },
+
+   logout: async (request, response) => {
+      try{
+         //clear the token cookie
+         response.clearCookie('token');
+         //return a success message
+         response.json({ message: 'Logout successful' });
       } catch (error) {
          response.status(500).json({ message: error.message });
       }
