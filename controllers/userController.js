@@ -7,6 +7,7 @@ const userController = {
     try {
        //get user inputs from req body
        const { email, password, username, location } = request.body;
+       console.log(request.body)
        // check if the user already exists in the database
        const user = await User.findOne({ username });
        // if the user exists, return an error

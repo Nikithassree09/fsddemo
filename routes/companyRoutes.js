@@ -2,7 +2,7 @@ const express = require('express');
 const gascompanyRouter = express.Router();
 const gascompanyController = require('../controllers/companyController');
 const auth = require('../middleware/auth');
-const companyController = require('../controllers/companyController');
+
 
 gascompanyRouter.post('/', auth.verifytoken, auth.isAdmin,
 gascompanyController.creategasCompany);
